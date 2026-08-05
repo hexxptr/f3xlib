@@ -158,96 +158,110 @@ end
 function F3XLIB.create(shape, cf, parent)
   shape = shape or "Normal"
   parent = parent or workspace
-  return F3XLIB.execF3X("CreatePart", shape, cf, parent)
+  if not se then return nil end
+  return se:InvokeServer("CreatePart", shape, cf, parent)
 end
 
 function F3XLIB.remove(obj)
   if not obj then return false end
+  if not se then return false end
   if type(obj) == "table" then
-    return F3XLIB.execF3X("Remove", obj)
+    return se:InvokeServer("Remove", obj)
   end
-  return F3XLIB.execF3X("Remove", {obj})
+  return se:InvokeServer("Remove", {obj})
 end
 
 function F3XLIB.move(part, cf)
   if not part or not cf then return false end
-  return F3XLIB.execF3X("SyncMove", {
+  if not se then return false end
+  return se:InvokeServer("SyncMove", {
     {Part = part, CFrame = cf}
   })
 end
 
 function F3XLIB.setAnchor(part, anchored)
   if not part then return false end
-  return F3XLIB.execF3X("SyncAnchor", {
+  if not se then return false end
+  return se:InvokeServer("SyncAnchor", {
     {Part = part, Anchored = anchored}
   })
 end
 
 function F3XLIB.setCollision(part, canCollide)
   if not part then return false end
-  return F3XLIB.execF3X("SyncCollision", {
+  if not se then return false end
+  return se:InvokeServer("SyncCollision", {
     {Part = part, CanCollide = canCollide}
   })
 end
 
 function F3XLIB.setColor(part, color, unionColoring)
   if not part or not color then return false end
+  if not se then return false end
   unionColoring = unionColoring or true
-  return F3XLIB.execF3X("SyncColor", {
+  return se:InvokeServer("SyncColor", {
     {Part = part, Color = color, UnionColoring = unionColoring}
   })
 end
 
 function F3XLIB.resize(part, size, cf)
   if not part or not size then return false end
+  if not se then return false end
   cf = cf or part.CFrame
-  return F3XLIB.execF3X("SyncResize", {
+  return se:InvokeServer("SyncResize", {
     {Part = part, Size = size, CFrame = cf}
   })
 end
 
 function F3XLIB.weld(part1, part2, lead)
   if not part1 or not part2 then return false end
+  if not se then return false end
   lead = lead or part1
-  return F3XLIB.execF3X("CreateWelds", {part1, part2}, lead)
+  return se:InvokeServer("CreateWelds", {part1, part2}, lead)
 end
 
 function F3XLIB.setName(part, name)
   if not part or not name then return false end
-  return F3XLIB.execF3X("SetName", {part}, name)
+  if not se then return false end
+  return se:InvokeServer("SetName", {part}, name)
 end
 
 function F3XLIB.setTexture(part, textureId)
   if not part or not textureId then return false end
-  return F3XLIB.execF3X("SyncMesh", {
+  if not se then return false end
+  return se:InvokeServer("SyncMesh", {
     {Part = part, TextureId = "rbxassetid://" .. textureId}
   })
 end
 
 function F3XLIB.addMesh(part)
   if not part then return false end
-  return F3XLIB.execF3X("CreateMeshes", {
+  if not se then return false end
+  return se:InvokeServer("CreateMeshes", {
     {Part = part}
   })
 end
 
 function F3XLIB.setMesh(part, meshId)
   if not part or not meshId then return false end
-  return F3XLIB.execF3X("SyncMesh", {
+  if not se then return false end
+  return se:InvokeServer("SyncMesh", {
     {Part = part, MeshId = "rbxassetid://" .. meshId}
   })
 end
 
 function F3XLIB.meshResize(part, scale)
   if not part or not scale then return false end
-  return F3XLIB.execF3X("SyncMesh", {
+  if not se then return false end
+  return se:InvokeServer("SyncMesh", {
     {Part = part, Scale = scale}
   })
 end
 
 function F3XLIB.setLocked(part, locked)
   if not part then return false end
-  return F3XLIB.execF3X("SetLocked", {part}, locked)
+  if not se then return false end
+  return se:InvokeServer("SetLocked", {part}, locked)
 end
 
 return F3XLIB
