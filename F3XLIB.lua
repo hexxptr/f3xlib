@@ -258,6 +258,14 @@ function F3XLIB.meshResize(part, scale)
   })
 end
 
+function F3XLIB.setMeshColor(part, color)
+  if not part or not color then return false end
+  if not se then return false end
+  return se:InvokeServer("SyncMesh", {
+    {Part = part, VertexColor = color}
+  })
+end
+
 function F3XLIB.setLocked(part, locked)
   if not part then return false end
   if not se then return false end
