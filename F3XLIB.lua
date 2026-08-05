@@ -264,4 +264,20 @@ function F3XLIB.setLocked(part, locked)
   return se:InvokeServer("SetLocked", {part}, locked)
 end
 
+function F3XLIB.addFire(part)
+  if not part then return false end
+  if not se then return false end
+  return se:InvokeServer("CreateDecorations", {
+    {Part = part, DecorationType = "Fire"}
+  })
+end
+
+function F3XLIB.setFire(part, size, heat, color, secondaryColor)
+  if not part then return false end
+  if not se then return false end
+  return se:InvokeServer("SyncDecorate", {
+    {Part = part, DecorationType = "Fire", Size = size, Heat = heat, Color = color, SecondaryColor = secondaryColor}
+  })
+end
+
 return F3XLIB
