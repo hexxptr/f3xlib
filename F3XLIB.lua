@@ -150,9 +150,8 @@ function F3XLIB.execF3X(...)
       se = F3XLIB.getSE(f3x)
     end
   end
-  if not se then return false end
-  se:InvokeServer(...)
-  return true
+  if not se then return nil end
+  return se:InvokeServer(...)
 end
 
 
