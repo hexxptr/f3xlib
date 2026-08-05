@@ -23,10 +23,10 @@ end
 function F3XLIB.getHDPrefix()
   local HDAdmin = RS:FindFirstChild("HDAdminHDClient")
   if not HDAdmin then return nil end
-  
+
   local config = HDAdmin:FindFirstChild("Settings") or HDAdmin:FindFirstChild("Config") or HDAdmin:FindFirstChild("Configuration")
   if not config then return nil end
-  
+
   local prefix = config:FindFirstChild("Prefix")
   if prefix then
     if prefix:IsA("StringValue") then
@@ -35,7 +35,7 @@ function F3XLIB.getHDPrefix()
       return prefix
     end
   end
-  
+
   return nil
 end
 
@@ -50,7 +50,7 @@ end
 
 function F3XLIB.getAllF3X()
   local f3x = {}
-  
+
   local backpack = player:FindFirstChild("Backpack")
   if backpack then
     for _, obj in ipairs(backpack:GetChildren()) do
@@ -62,7 +62,7 @@ function F3XLIB.getAllF3X()
       end
     end
   end
-  
+
   local char = F3XLIB.getChar(player)
   if char then
     for _, obj in ipairs(char:GetChildren()) do
@@ -74,7 +74,7 @@ function F3XLIB.getAllF3X()
       end
     end
   end
-  
+
   return f3x
 end
 
@@ -91,7 +91,7 @@ function F3XLIB.tryGetF3X()
   if f3xTable and #f3xTable > 0 then
     return f3xTable[1]
   end
-  
+
   if F3XLIB.info.HDAdmin.hasRCS then
     local HDrequest = F3XLIB.getRCS()
     local commands = {"btools", "f3x", "buildingtools"}
@@ -104,7 +104,7 @@ function F3XLIB.tryGetF3X()
       end
     end
   end
-  
+
   return nil
 end
 
@@ -133,6 +133,35 @@ if f3x then
   se = F3XLIB.getSE(f3x)
   if se then
     F3XLIB.info.F3X.hasSE = true
+  end
+end
+
+
+function F3XLIB.refresh()
+  local newPrefix = F3XLIB.getHDPrefix()
+  if newPrefix then
+    F3XLIB.info.HDAdmin.prefix = newPrefix
+  end
+  HDrequest = F3XLIB.getRCS()
+  if HDrequest then
+    F3XLIB.info.HDAdmin.hasRCS = true
+  else
+    F3XLIB.info.HDAdmin.hasRCS = false
+  end
+
+  f3x = F3XLIB.getF3X()
+  se = nil
+  if f3x then
+    F3XLIB.info.F3X.hasF3X = true
+    se = F3XLIB.getSE(f3x)
+    if se then
+      F3XLIB.info.F3X.hasSE = true
+    else
+      F3XLIB.info.F3X.hasSE = false
+    end
+  else
+    F3XLIB.info.F3X.hasF3X = false
+    F3XLIB.info.F3X.hasSE = false
   end
 end
 
