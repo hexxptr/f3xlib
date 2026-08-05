@@ -193,7 +193,7 @@ end
 
 function F3XLIB.setColor(part, color, unionColoring)
   if not part or not color then return false end
-  unionColoring = unionColoring or false
+  unionColoring = unionColoring or true
   return F3XLIB.execF3X("SyncColor", {
     {Part = part, Color = color, UnionColoring = unionColoring}
   })
