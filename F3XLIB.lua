@@ -79,7 +79,7 @@ function F3XLIB.getAllF3X()
 end
 
 function F3XLIB.getF3X()
-  local f3xTable = getAllF3X()
+  local f3xTable = F3XLIB.getAllF3X()
   if f3xTable and #f3xTable > 0 then
     return f3xTable[1]
   end
@@ -87,17 +87,18 @@ function F3XLIB.getF3X()
 end
 
 function F3XLIB.tryGetF3X()
-  local f3xTable = getAllF3X()
+  local f3xTable = F3XLIB.getAllF3X()
   if f3xTable and #f3xTable > 0 then
     return f3xTable[1]
   end
   
   if F3XLIB.info.HDAdmin.hasRCS then
+    local HDrequest = F3XLIB.getRCS()
     local commands = {"btools", "f3x", "buildingtools"}
     for _, cmd in ipairs(commands) do
       HDrequest:InvokeServer(F3XLIB.info.HDAdmin.prefix .. cmd)
       task.wait(0.5)
-      f3xTable = getAllF3X()
+      f3xTable = F3XLIB.getAllF3X()
       if f3xTable and #f3xTable > 0 then
         return f3xTable[1]
       end
@@ -144,9 +145,9 @@ end
 
 function F3XLIB.execF3X(...)
   if not se then
-    f3x = tryGetF3X()
+    f3x = F3XLIB.tryGetF3X()
     if f3x then
-      se = getSE(f3x)
+      se = F3XLIB.getSE(f3x)
     end
   end
   if not se then return false end
@@ -158,34 +159,34 @@ end
 function F3XLIB.create(shape, cf, parent)
   shape = shape or "Normal"
   parent = parent or workspace
-  return execF3X("CreatePart", shape, cf, parent)
+  return F3XLIB.execF3X("CreatePart", shape, cf, parent)
 end
 
 function F3XLIB.remove(obj)
   if not obj then return false end
   if type(obj) == "table" then
-    return execF3X("Remove", obj)
+    return F3XLIB.execF3X("Remove", obj)
   end
-  return execF3X("Remove", {obj})
+  return F3XLIB.execF3X("Remove", {obj})
 end
 
 function F3XLIB.move(part, cf)
   if not part or not cf then return false end
-  return execF3X("SyncMove", {
+  return F3XLIB.execF3X("SyncMove", {
     {Part = part, CFrame = cf}
   })
 end
 
 function F3XLIB.setAnchor(part, anchored)
   if not part then return false end
-  return execF3X("SyncAnchor", {
+  return F3XLIB.execF3X("SyncAnchor", {
     {Part = part, Anchored = anchored}
   })
 end
 
 function F3XLIB.setCollision(part, canCollide)
   if not part then return false end
-  return execF3X("SyncCollision", {
+  return F3XLIB.execF3X("SyncCollision", {
     {Part = part, CanCollide = canCollide}
   })
 end
@@ -193,7 +194,7 @@ end
 function F3XLIB.setColor(part, color, unionColoring)
   if not part or not color then return false end
   unionColoring = unionColoring or false
-  return execF3X("SyncColor", {
+  return F3XLIB.execF3X("SyncColor", {
     {Part = part, Color = color, UnionColoring = unionColoring}
   })
 end
@@ -201,7 +202,7 @@ end
 function F3XLIB.resize(part, size, cf)
   if not part or not size then return false end
   cf = cf or part.CFrame
-  return execF3X("SyncResize", {
+  return F3XLIB.execF3X("SyncResize", {
     {Part = part, Size = size, CFrame = cf}
   })
 end
@@ -209,45 +210,45 @@ end
 function F3XLIB.weld(part1, part2, lead)
   if not part1 or not part2 then return false end
   lead = lead or part1
-  return execF3X("CreateWelds", {part1, part2}, lead)
+  return F3XLIB.execF3X("CreateWelds", {part1, part2}, lead)
 end
 
 function F3XLIB.setName(part, name)
   if not part or not name then return false end
-  return execF3X("SetName", {part}, name)
+  return F3XLIB.execF3X("SetName", {part}, name)
 end
 
 function F3XLIB.setTexture(part, textureId)
   if not part or not textureId then return false end
-  return execF3X("SyncMesh", {
+  return F3XLIB.execF3X("SyncMesh", {
     {Part = part, TextureId = "rbxassetid://" .. textureId}
   })
 end
 
 function F3XLIB.addMesh(part)
   if not part then return false end
-  return execF3X("CreateMeshes", {
+  return F3XLIB.execF3X("CreateMeshes", {
     {Part = part}
   })
 end
 
 function F3XLIB.setMesh(part, meshId)
   if not part or not meshId then return false end
-  return execF3X("SyncMesh", {
+  return F3XLIB.execF3X("SyncMesh", {
     {Part = part, MeshId = "rbxassetid://" .. meshId}
   })
 end
 
 function F3XLIB.meshResize(part, scale)
   if not part or not scale then return false end
-  return execF3X("SyncMesh", {
+  return F3XLIB.execF3X("SyncMesh", {
     {Part = part, Scale = scale}
   })
 end
 
 function F3XLIB.setLocked(part, locked)
   if not part then return false end
-  return execF3X("SetLocked", {part}, locked)
+  return F3XLIB.execF3X("SetLocked", {part}, locked)
 end
 
 return F3XLIB
