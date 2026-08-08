@@ -6,7 +6,8 @@ local F3XLIB = {
     },
     F3X = {
       hasF3X = false,
-      hasSE = false
+      hasSE = false,
+      isPlus = false
     }
   }
 }
@@ -44,8 +45,7 @@ function F3XLIB.getRCS()
   if not HDAdmin then return nil end
   local Signals = HDAdmin:FindFirstChild("Signals")
   if not Signals then return nil end
-  local rcs = Signals:FindFirstChild("RequestCommandSilent")
-  return rcs
+  return Signals:FindFirstChild("RequestCommandSilent") or Signals:FindFirstChild("RequestCommandModification")
 end
 
 function F3XLIB.getAllF3X()
@@ -112,8 +112,19 @@ function F3XLIB.getSE(f3x)
   if not f3x then return nil end
   local syncAPI = f3x:FindFirstChild("SyncAPI")
   if not syncAPI then return nil end
-  local se = syncAPI:FindFirstChild("ServerEndpoint")
-  return se
+  return syncAPI:FindFirstChild("ServerEndpoint")
+end
+
+function F3XLIB.isF3XPlus(f3x)
+  if not f3x then return false end
+  if f3x.Name == "Building Tools+" or f3x.Name:find("+") ~= nil then
+    return true
+  end
+  local tools = f3x:FindFirstChild("Tools")
+  if tools and tools:FindFirstChild("Transformation") then
+    return true
+  end
+  return false
 end
 
 
@@ -130,6 +141,7 @@ local f3x = F3XLIB.getF3X()
 local se
 if f3x then
   F3XLIB.info.F3X.hasF3X = true
+  F3XLIB.info.F3X.isPlus = F3XLIB.isF3XPlus(f3x)
   se = F3XLIB.getSE(f3x)
   if se then
     F3XLIB.info.F3X.hasSE = true
@@ -153,6 +165,7 @@ function F3XLIB.refresh()
   se = nil
   if f3x then
     F3XLIB.info.F3X.hasF3X = true
+    F3XLIB.info.F3X.isPlus = F3XLIB.isF3XPlus(f3x)
     se = F3XLIB.getSE(f3x)
     if se then
       F3XLIB.info.F3X.hasSE = true
@@ -162,6 +175,7 @@ function F3XLIB.refresh()
   else
     F3XLIB.info.F3X.hasF3X = false
     F3XLIB.info.F3X.hasSE = false
+    F3XLIB.info.F3X.isPlus = false
   end
 end
 
@@ -189,6 +203,12 @@ function F3XLIB.create(shape, cf, parent)
   parent = parent or workspace
   if not se then return nil end
   return se:InvokeServer("CreatePart", shape, cf, parent)
+end
+
+function F3XLIB.createTool(cf, parent)
+  parent = parent or workspace
+  if not se then return nil end
+  return se:InvokeServer("CreatePart", "Tool", cf, parent)
 end
 
 function F3XLIB.remove(obj)
@@ -301,20 +321,61 @@ function F3XLIB.setLocked(part, locked)
   return se:InvokeServer("SetLocked", {part}, locked)
 end
 
-function F3XLIB.addFire(part)
-  if not part then return false end
+function F3XLIB.addDecoration(part, decorationType)
+  if not part or not decorationType then return false end
   if not se then return false end
   return se:InvokeServer("CreateDecorations", {
-    {Part = part, DecorationType = "Fire"}
+    {Part = part, DecorationType = decorationType}
   })
 end
 
-function F3XLIB.setFire(part, size, heat, color, secondaryColor)
-  if not part then return false end
+function F3XLIB.setDecoration(part, decorationType, properties)
+  if not part or not decorationType then return false end
   if not se then return false end
-  return se:InvokeServer("SyncDecorate", {
-    {Part = part, DecorationType = "Fire", Size = size, Heat = heat, Color = color, SecondaryColor = secondaryColor}
+  local args = {Part = part, DecorationType = decorationType}
+  for k, v in pairs(properties) do
+    args[k] = v
+  end
+  return se:InvokeServer("SyncDecorate", {args})
+end
+
+function F3XLIB.addFire(part)
+  return F3XLIB.addDecoration(part, "Fire")
+end
+
+function F3XLIB.setFire(part, size, heat, color, secondaryColor)
+  return F3XLIB.setDecoration(part, "Fire", {
+    Size = size,
+    Heat = heat,
+    Color = color,
+    SecondaryColor = secondaryColor
   })
+end
+
+function F3XLIB.addParticleEmitter(part)
+  return F3XLIB.addDecoration(part, "ParticleEmitter")
+end
+
+function F3XLIB.setParticleEmitter(part, properties)
+  return F3XLIB.setDecoration(part, "ParticleEmitter", properties)
+end
+
+function F3XLIB.addSmoke(part)
+  return F3XLIB.addDecoration(part, "Smoke")
+end
+
+function F3XLIB.addSparkles(part)
+  return F3XLIB.addDecoration(part, "Sparkles")
+end
+
+function F3XLIB.addSelectionBox(part)
+  return F3XLIB.addDecoration(part, "SelectionBox")
+end
+
+function F3XLIB.extractImageFromDecal(decalId)
+  if not decalId then return nil end
+  if not se then return nil end
+  return se:InvokeServer("ExtractImageFromDecal", tostring(decalId))
 end
 
 return F3XLIB
