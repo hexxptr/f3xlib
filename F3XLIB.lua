@@ -39,13 +39,24 @@ function F3XLIB.getHDPrefix()
 
   return nil
 end
-
 function F3XLIB.getRCS()
   local HDAdmin = RS:FindFirstChild("HDAdminHDClient")
   if not HDAdmin then return nil end
   local Signals = HDAdmin:FindFirstChild("Signals")
   if not Signals then return nil end
   return Signals:FindFirstChild("RequestCommandSilent") or Signals:FindFirstChild("RequestCommandModification")
+end
+
+function F3XLIB.isF3XPlus(f3x)
+  if not f3x then return false end
+  if f3x.Name == "Building Tools+" or f3x.Name:find("+") ~= nil then
+    return true
+  end
+  local tools = f3x:FindFirstChild("Tools")
+  if tools and tools:FindFirstChild("Transformation") then
+    return true
+  end
+  return false
 end
 
 function F3XLIB.getAllF3X()
@@ -81,17 +92,28 @@ end
 function F3XLIB.getF3X()
   local f3xTable = F3XLIB.getAllF3X()
   if f3xTable and #f3xTable > 0 then
+    for _, obj in ipairs(f3xTable) do
+      if F3XLIB.isF3XPlus(obj) then
+        return obj
+      end
+    end
+    
     return f3xTable[1]
   end
   return nil
 end
-
 function F3XLIB.tryGetF3X()
   local f3xTable = F3XLIB.getAllF3X()
   if f3xTable and #f3xTable > 0 then
+    for _, obj in ipairs(f3xTable) do
+      if F3XLIB.isF3XPlus(obj) then
+        return obj
+      end
+    end
+    
     return f3xTable[1]
   end
-
+  
   if F3XLIB.info.HDAdmin.hasRCS then
     local HDrequest = F3XLIB.getRCS()
     local commands = {"btools", "f3x", "buildingtools"}
@@ -104,7 +126,7 @@ function F3XLIB.tryGetF3X()
       end
     end
   end
-
+  
   return nil
 end
 
@@ -113,18 +135,6 @@ function F3XLIB.getSE(f3x)
   local syncAPI = f3x:FindFirstChild("SyncAPI")
   if not syncAPI then return nil end
   return syncAPI:FindFirstChild("ServerEndpoint")
-end
-
-function F3XLIB.isF3XPlus(f3x)
-  if not f3x then return false end
-  if f3x.Name == "Building Tools+" or f3x.Name:find("+") ~= nil then
-    return true
-  end
-  local tools = f3x:FindFirstChild("Tools")
-  if tools and tools:FindFirstChild("Transformation") then
-    return true
-  end
-  return false
 end
 
 
